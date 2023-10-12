@@ -1,0 +1,26 @@
+name: run the workflow on PR comment
+
+on:
+  issue_comment:
+    types: [ created, edited ]
+
+jobs:
+  test-workflow:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.issue.pull_request && github.event.issue.number == 2 && contains(github.event.comment.body, 'development')}}
+    steps:
+
+      - run: echo "${{ github.event.issue.number }}"
+      - run: echo "${{ github.event.comment.tag }}"
+      - run: echo "${{ github.event.comment.body }}"
+
+      - name: truncate string
+        uses: 2428392/gh-truncate-string-action@v1.1.0
+        id: commit-hash
+        with:
+          stringToTruncate: "${{ github.event.comment.body }}"
+          maxLength: 40
+
+      - run: echo https://github.com/${{ steps.commit-hash.outputs.string }}
+
+
