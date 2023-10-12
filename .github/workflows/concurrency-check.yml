@@ -1,0 +1,23 @@
+name: concurrency check
+on: 
+  workflow_dispatch:
+  push: 
+    branches: 
+      - on-demand-release-web-*
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+  
+jobs:
+  concurrency-check-job:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: echo workflow name
+        run: echo ${{ github.workflow }}
+      - run: echo ${{ github.ref_name }}
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
+        
